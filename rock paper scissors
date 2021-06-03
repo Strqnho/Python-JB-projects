@@ -1,11 +1,37 @@
 import random
 
-correct_inputs = ["rock", "paper", "scissors", "!exit", "!rating"]
+correct_plays = ['fire', 'scissors', 'snake', 'human', 'tree', 'wolf', 'sponge', 'paper', 'air', 'water', 'dragon', 'devil', 'lightning', 'gun', 'rock']
+correct_commands = ["!exit", "!rating"]
 
 user_name = input("Enter your name: ")
 print(f"Hello, {user_name}!")
 
-my_dict = {}
+user_list = input()
+if len(user_list) == 0:
+    user_list = ['rock', 'paper', 'scissors']
+else:
+    user_list = user_list.split(',')
+print("Okay, let's start")
+
+correct_inputs = user_list + correct_commands
+
+results_dict = {}
+
+play_dict = {"fire": correct_plays[1:8],
+             "scissors": correct_plays[2:9],
+             "snake": correct_plays[3:10],
+             "human": correct_plays[4:11],
+             "tree": correct_plays[5:12],
+             "wolf": correct_plays[6:13],
+             "sponge": correct_plays[7:14],
+             "paper": correct_plays[8:15],
+             "air": ['water', 'dragon', 'devil', 'lightning', 'gun', 'rock', "fire"],
+             "water": ['dragon', 'devil', 'lightning', 'gun', 'rock', "fire", "scissors"],
+             "dragon": ['devil', 'lightning', 'gun', 'rock', "fire", "scissors", 'snake'],
+             "devil": ['lightning', 'gun', 'rock', "fire", "scissors", 'snake', "human"],
+             "lightning": ['gun', 'rock', "fire", "scissors", 'snake', "human", "tree"],
+             "gun": ['rock', "fire", "scissors", 'snake', "human", "tree", 'wolf'],
+             "rock": ["fire", "scissors", 'snake', "human", "tree", 'wolf', "sponge"]}
 
 file = open("rating.txt", "r+")
 
@@ -13,12 +39,20 @@ for line in file:
     record = line.split()
     name = record[0]
     score = int(record[1])
-    my_dict[name] = score
+    results_dict[name] = score
 
-if user_name not in my_dict.keys():
-    my_dict[user_name] = 0
+if user_name not in results_dict.keys():
+    results_dict[user_name] = 0
 
 file.close()
+
+
+def win(points=100):
+    results_dict[user_name] += points
+
+
+def draw(points=50):
+    results_dict[user_name] += points
 
 
 def play():
@@ -32,52 +66,30 @@ def play():
         if user_input == "!exit":
             print("Bye")
             new_file = open("rating.txt", "w")
-            for k, v in my_dict.items():
+            for k, v in results_dict.items():
                 new_file.write(f"{k} {v}\n")
             new_file.close()
             exit()
 
         if user_input == "!rating":
-            print(f'Your rating: {my_dict[user_name]}')
+            print(f'Your rating: {results_dict[user_name]}')
             play()
 
-        comp_choice = random.choice(["rock", "paper", "scissors"])
+        comp_choice = random.choice(user_list)
 
-        if user_input == "rock":
-            if comp_choice == "paper":
-                print(f"Sorry, but the computer chose {comp_choice}")
+        if comp_choice in play_dict[user_input]:
+            print(f"Well done. The computer chose {comp_choice} and failed")
+            win()
+            play()
 
-            elif comp_choice == "scissors":
-                print(f"Well done. The computer chose {comp_choice} and failed")
-                my_dict[user_name] += 100
+        elif comp_choice == user_input:
+            print(f"There is a draw {comp_choice}")
+            draw()
+            play()
 
-            else:
-                print(f"There is a draw {comp_choice}")
-                my_dict[user_name] += 50
-
-        elif user_input == "paper":
-            if comp_choice == "scissors":
-                print(f"Sorry, but the computer chose {comp_choice}")
-
-            elif comp_choice == "rock":
-                print(f"Well done. The computer chose {comp_choice} and failed")
-                my_dict[user_name] += 100
-
-            else:
-                print(f"There is a draw {comp_choice}")
-                my_dict[user_name] += 50
-
-        elif user_input == "scissors":
-            if comp_choice == "rock":
-                print(f"Sorry, but the computer chose {comp_choice}")
-
-            elif comp_choice == "paper":
-                print(f"Well done. The computer chose {comp_choice} and failed")
-                my_dict[user_name] += 100
-
-            else:
-                print(f"There is a draw {comp_choice}")
-                my_dict[user_name] += 50
+        else:
+            print(f"Sorry, but the computer chose {comp_choice}")
+            play()
 
 
 play()
