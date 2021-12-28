@@ -1,2 +1,2 @@
 # Python-JB-projects
-Im gonna upload simple projects from the JetBrains Academy
+Simple projects from the JetBrains Academy
